@@ -97,7 +97,7 @@ sequenceDiagram
 | TanStack Query | 서버 상태 캐싱 및 동기화 | TanStack Query |
 | Express Router | HTTP 엔드포인트 라우팅 | Express |
 | JWT Middleware | Bearer 토큰 검증, req.user 주입 | jsonwebtoken |
-| Service Layer | 비즈니스 규칙 (BR-*) 처리 | TypeScript |
+| Service Layer | 비즈니스 규칙 (BR-*) 처리 | JavaScript (Node.js) |
 | Repository | Parameterized Query 실행, row 매핑 | pg (ORM 금지) |
 | Connection Pool | DB 연결 재사용 (max 20) | pg.Pool |
 | bcrypt | 비밀번호 단방향 해시 (cost ≥ 12) | bcrypt |

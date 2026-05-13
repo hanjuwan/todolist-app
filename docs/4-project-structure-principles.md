@@ -113,7 +113,9 @@ PostgreSQL
 
 ### 4.2 도메인 모델은 인프라를 모른다
 
-`Todo`, `User`, `Category` 같은 도메인 타입은 `pg.QueryResult`, `Request`, `Response` 등 인프라 타입을 import 하지 않는다. 도메인 타입은 `*.types.ts`에 순수 TypeScript 인터페이스로만 정의한다.
+`Todo`, `User`, `Category` 같은 도메인 모델은 `pg.QueryResult`, `Request`, `Response` 등 인프라 타입에 의존하지 않는다.
+- **프론트엔드**: `*.types.ts`에 순수 TypeScript 인터페이스로 정의.
+- **백엔드**: JavaScript이므로 도메인 모델은 `*.types.js`(JSDoc `@typedef`)로 정의하거나, 단순 객체 형태로 사용한다. JSDoc 타입은 ESLint(`@typescript-eslint/eslint-plugin`)로 정적 검증 가능.
 
 ### 4.3 의존성 흐름 시각화
 
@@ -148,7 +150,7 @@ flowchart LR
 
 | 대상 | 케이스 | 예시 |
 |------|--------|------|
-| 파일·디렉토리 | kebab-case | `todo-service.ts`, `auth-middleware.ts`, `due-date-picker.tsx` |
+| 파일·디렉토리 | kebab-case | (백엔드) `todo-service.js`, `auth-middleware.js` · (프론트엔드) `due-date-picker.tsx` |
 | 변수·함수 | camelCase | `createTodo`, `isCompleted`, `findByUserId` |
 | 클래스·타입·인터페이스 | PascalCase | `Todo`, `User`, `CreateTodoInput`, `TodoRepository` |
 | React 컴포넌트 (파일명) | PascalCase 허용 (관례) | `TodoCard.tsx`, `FilterBar.tsx` — 단 프로젝트 전체에서 통일 |
@@ -180,12 +182,12 @@ flowchart LR
 
 ### 5.4 SQL ↔ JS 컬럼명 변환
 
-PostgreSQL은 snake_case, JS/TS는 camelCase. Repository 레이어에서 명시적으로 매핑한다.
+PostgreSQL은 snake_case, JS는 camelCase. Repository 레이어에서 명시적으로 매핑한다.
 
-```ts
-// Repository 내부 매핑 예시
+```js
+// Repository 내부 매핑 예시 (백엔드 JavaScript)
 const row = result.rows[0];
-const todo: Todo = {
+const todo = {
   id: row.id,
   userId: row.user_id,
   categoryId: row.category_id,
@@ -236,8 +238,9 @@ const todo: Todo = {
 
 | 항목 | 규칙 |
 |------|------|
-| TypeScript | `strict: true` (noImplicitAny, strictNullChecks 포함). `any` 금지 (불가피하면 `unknown` + narrowing) |
-| ESLint | `@typescript-eslint/recommended` 기준 + 프로젝트 룰. import 순서 규칙 적용 |
+| 프론트엔드 TypeScript | `strict: true` (noImplicitAny, strictNullChecks 포함). `any` 금지 (불가피하면 `unknown` + narrowing) |
+| 백엔드 JavaScript | TypeScript 미사용. 도메인/DTO 형태는 JSDoc `@typedef` 또는 zod 스키마(`z.infer`)로 표현. `any` 패턴 회피, 명시적 검증 우선 |
+| ESLint | 프론트엔드는 `@typescript-eslint/recommended`, 백엔드는 `eslint:recommended` + import 순서 규칙 |
 | Prettier | 코드 포매팅 통일. ESLint와 충돌 없도록 `eslint-config-prettier` 적용 |
 
 ### 6.5 PR 머지 조건 (이상)
@@ -256,7 +259,7 @@ const todo: Todo = {
 | 단위 테스트 | 인증(JWT 발급/검증), bcrypt 해시, 카테고리 BR-C1 검증, 필터 SQL 빌더 — 4개 그룹 |
 | 통합 테스트 | `POST /api/auth/register` → `POST /api/auth/login` → `POST /api/todos` → `GET /api/todos` 해피패스 1개 |
 | E2E | 수동 검증으로 대체 (Day 3 QA 시간) |
-| 린트·타입 | strict + ESLint는 Day 1부터 무조건 켠다 |
+| 린트·타입 | 프론트엔드 TypeScript strict + ESLint(공통)는 Day 1부터 무조건 켠다 |
 
 ---
 
@@ -268,14 +271,14 @@ const todo: Todo = {
 |------|------|
 | `.env`는 **절대 커밋 금지** | `.gitignore`에 반드시 포함 |
 | `.env.example` 커밋 (값은 placeholder) | 신규 환경 세팅 가이드 |
-| 환경변수는 `config/env.ts` 한 곳에서 로드·검증 후 type-safe 객체로 노출 | `process.env` 직접 참조 금지 |
+| 백엔드 환경변수는 `config/env.js` 한 곳에서 로드·검증 후 동결된(`Object.freeze`) 객체로 노출 | `process.env` 직접 참조 금지 |
 | 환경별 분리 | `.env.development`, `.env.production` (선택) |
 
 #### 필수 환경 변수 목록
 
 | 키 | 설명 |
 |----|------|
-| `DATABASE_URL` 또는 `PGHOST/PGPORT/PGUSER/PGPASSWORD/PGDATABASE` | pg 연결 정보 |
+| `POSTGRES_CONNECTION_STRING` | pg 연결 URL (예: `postgresql://user:password@host:port/database`) |
 | `JWT_SECRET` | JWT 서명 키 (충분히 긴 랜덤 문자열) |
 | `JWT_ACCESS_TOKEN_TTL` | 토큰 유효기간 (예: `1h`) |
 | `BCRYPT_COST` | bcrypt cost factor (≥ 12) |
@@ -300,7 +303,7 @@ const todo: Todo = {
 
 ### 7.3 사용자 데이터 격리 — 구현 규약
 
-```ts
+```js
 // ❌ 금지 — user_id 조건 없음
 const todo = await pool.query('SELECT * FROM todos WHERE id = $1', [id]);
 
@@ -407,35 +410,35 @@ backend/
 ├── src/
 │   ├── modules/                    # 도메인 단위 모듈
 │   │   ├── auth/
-│   │   │   ├── auth.router.ts      # POST /register, /login, /logout
-│   │   │   ├── auth.service.ts     # JWT 발급, 비밀번호 검증
-│   │   │   ├── auth.repository.ts  # (필요 시) — auth는 users repo 재사용 가능
-│   │   │   ├── auth.validator.ts   # zod 또는 수동 검증 스키마
-│   │   │   └── auth.types.ts
+│   │   │   ├── auth.router.js      # POST /register, /login, /logout
+│   │   │   ├── auth.service.js     # JWT 발급, 비밀번호 검증
+│   │   │   ├── auth.repository.js  # (필요 시) — auth는 users repo 재사용 가능
+│   │   │   ├── auth.validator.js   # zod 검증 스키마
+│   │   │   └── auth.types.js       # JSDoc @typedef
 │   │   ├── users/
-│   │   │   ├── users.router.ts     # /users/me 조회·수정·탈퇴
-│   │   │   ├── users.service.ts
-│   │   │   ├── users.repository.ts
-│   │   │   ├── users.validator.ts
-│   │   │   └── users.types.ts
+│   │   │   ├── users.router.js     # /users/me 조회·수정·탈퇴
+│   │   │   ├── users.service.js
+│   │   │   ├── users.repository.js
+│   │   │   ├── users.validator.js
+│   │   │   └── users.types.js
 │   │   ├── todos/
-│   │   │   ├── todos.router.ts
-│   │   │   ├── todos.service.ts
-│   │   │   ├── todos.repository.ts
-│   │   │   ├── todos.validator.ts
-│   │   │   └── todos.types.ts
+│   │   │   ├── todos.router.js
+│   │   │   ├── todos.service.js
+│   │   │   ├── todos.repository.js
+│   │   │   ├── todos.validator.js
+│   │   │   └── todos.types.js
 │   │   └── categories/
-│   │       ├── categories.router.ts
-│   │       ├── categories.service.ts
-│   │       ├── categories.repository.ts
-│   │       ├── categories.validator.ts
-│   │       └── categories.types.ts
+│   │       ├── categories.router.js
+│   │       ├── categories.service.js
+│   │       ├── categories.repository.js
+│   │       ├── categories.validator.js
+│   │       └── categories.types.js
 │   ├── middlewares/
-│   │   ├── auth.middleware.ts      # JWT 검증, req.user 주입
-│   │   ├── error.middleware.ts     # 통합 에러 핸들러
-│   │   └── request-logger.middleware.ts
+│   │   ├── auth.middleware.js      # JWT 검증, req.user 주입
+│   │   ├── error.middleware.js     # 통합 에러 핸들러
+│   │   └── request-logger.middleware.js
 │   ├── db/
-│   │   ├── pool.ts                 # pg.Pool 단일 인스턴스
+│   │   ├── pool.js                 # pg.Pool 단일 인스턴스
 │   │   ├── migrations/             # SQL 마이그레이션
 │   │   │   ├── 20260513_0001_init_users.sql
 │   │   │   ├── 20260513_0002_init_categories.sql
@@ -443,38 +446,39 @@ backend/
 │   │   └── seeds/
 │   │       └── 20260513_default_categories.sql
 │   ├── config/
-│   │   └── env.ts                  # 환경변수 로드·검증
+│   │   └── env.js                  # 환경변수 로드·검증
 │   ├── utils/
-│   │   ├── password.ts             # bcrypt wrapper
-│   │   ├── jwt.ts                  # jsonwebtoken wrapper
-│   │   └── async-handler.ts        # express async error wrapper
-│   ├── app.ts                      # Express app 조립 (router, middleware)
-│   └── server.ts                   # listen() 진입점
+│   │   ├── password.js             # bcrypt wrapper
+│   │   ├── jwt.js                  # jsonwebtoken wrapper
+│   │   └── async-handler.js        # express async error wrapper
+│   ├── app.js                      # Express app 조립 (router, middleware)
+│   └── server.js                   # listen() 진입점
 ├── .env.example
 ├── .gitignore
-├── package.json
-└── tsconfig.json
+└── package.json                    # "type": "module" (ESM) 또는 CommonJS — 프로젝트 합의에 따름
 ```
+
+> 백엔드는 **순수 JavaScript**(Node.js)로 구현한다. TypeScript·tsconfig·`@types/*`는 두지 않는다. 타입 안전이 필요한 부분은 JSDoc `@typedef`와 zod 런타임 검증으로 대체한다.
 
 ### 9.2 파일별 역할 / 규칙
 
 | 파일 | 책임 | 금지사항 |
 |------|------|---------|
-| `*.router.ts` | HTTP 경로 정의, 미들웨어 체이닝, 입력 받아 service 호출, 결과를 JSON으로 응답 | 비즈니스 로직, pg 호출 |
-| `*.service.ts` | 비즈니스 규칙(BR-*), 트랜잭션 경계, 검증 결과에 따른 분기 | req/res 접근, 직접 pg 호출 (repository 경유) |
-| `*.repository.ts` | pg.Pool/Client로 Parameterized Query 실행, row → 도메인 객체 매핑 | 비즈니스 검증, HTTP 응답 |
-| `*.validator.ts` | 입력 스키마 정의(zod 권장 또는 수동) | DB 조회 |
-| `*.types.ts` | DTO, 도메인 모델 타입 | 런타임 코드 |
-| `middlewares/auth.middleware.ts` | JWT 검증, `req.user = { id, ... }` 주입, 실패 시 401 | 비즈니스 로직 |
-| `middlewares/error.middleware.ts` | 에러 정규화, HTTP 상태 매핑, 친화적 메시지 응답 | 스택트레이스 응답 노출 |
-| `db/pool.ts` | `new Pool(...)` 단일 인스턴스 export | 비즈니스 로직 |
-| `config/env.ts` | `process.env` 1회 로드·검증·typed export | 다른 모듈에서 `process.env` 직접 사용 금지 |
+| `*.router.js` | HTTP 경로 정의, 미들웨어 체이닝, 입력 받아 service 호출, 결과를 JSON으로 응답 | 비즈니스 로직, pg 호출 |
+| `*.service.js` | 비즈니스 규칙(BR-*), 트랜잭션 경계, 검증 결과에 따른 분기 | req/res 접근, 직접 pg 호출 (repository 경유) |
+| `*.repository.js` | pg.Pool/Client로 Parameterized Query 실행, row → 도메인 객체 매핑 | 비즈니스 검증, HTTP 응답 |
+| `*.validator.js` | 입력 스키마 정의(zod) | DB 조회 |
+| `*.types.js` | JSDoc `@typedef`로 DTO·도메인 모델 형태 문서화 | 런타임 코드 |
+| `middlewares/auth.middleware.js` | JWT 검증, `req.user = { id, ... }` 주입, 실패 시 401 | 비즈니스 로직 |
+| `middlewares/error.middleware.js` | 에러 정규화, HTTP 상태 매핑, 친화적 메시지 응답 | 스택트레이스 응답 노출 |
+| `db/pool.js` | `new Pool(...)` 단일 인스턴스 export | 비즈니스 로직 |
+| `config/env.js` | `process.env` 1회 로드·검증·동결 export | 다른 모듈에서 `process.env` 직접 사용 금지 |
 
 ### 9.3 pg Pool 운영 규칙
 
 | 규칙 | 설명 |
 |------|------|
-| Pool은 단일 인스턴스 | `db/pool.ts`에서만 생성. 다른 모듈은 import해서 재사용 |
+| Pool은 단일 인스턴스 | `db/pool.js`에서만 생성. 다른 모듈은 require/import해서 재사용 |
 | Repository에서만 Pool import | Service/Router는 import 금지 |
 | 트랜잭션 시 `pool.connect()`로 client 획득 | 끝나면 `client.release()` 보장 (try/finally) |
 | 종료 시 graceful shutdown | SIGTERM 시 `pool.end()` 호출 |
@@ -502,7 +506,7 @@ PRD 8.1의 핵심 제약. Prisma/TypeORM/Sequelize 등 모든 ORM·Query Builder
 
 ### 10.2 Parameterized Query 강제
 
-```ts
+```js
 // ❌ SQL Injection 위험 — 절대 금지
 const result = await pool.query(`SELECT * FROM users WHERE email = '${email}'`);
 
@@ -535,7 +539,7 @@ const result = await pool.query('SELECT * FROM users WHERE email = $1', [email])
 | SCN-10 회원 탈퇴 (FR-05) | todos 삭제 → 사용자 정의 categories 삭제 → users 삭제 |
 | SCN-08 카테고리 재분류 후 삭제 (OI-01 결정에 따라) | todos.category_id UPDATE → categories DELETE |
 
-```ts
+```js
 const client = await pool.connect();
 try {
   await client.query('BEGIN');
@@ -635,7 +639,7 @@ coverage/
 
 | 확장 항목 | 사전 설계 포인트 | 적용 시점 |
 |---------|--------------|---------|
-| **OAuth Social Login** | auth 모듈을 strategy 패턴으로 분리 (`auth.strategy.local.ts`, `auth.strategy.google.ts`). 1차에서는 local만 구현하되 인터페이스는 분리 | 2차 |
+| **OAuth Social Login** | auth 모듈을 strategy 패턴으로 분리 (`auth.strategy.local.js`, `auth.strategy.google.js`). 1차에서는 local만 구현하되 인터페이스는 분리 | 2차 |
 | **Refresh Token** | JWT 발급 함수에서 `access` / `refresh` 두 토큰 발급 가능한 구조로 시그니처 미리 잡아둔다 | 2차 |
 | **다크모드** | 1차부터 색상은 CSS 변수로 정의 (`--color-bg`, `--color-text`). 2차에서 테마 토글만 추가 | 2차 |
 | **다국어 (i18n)** | 화면 텍스트는 직접 문자열 대신 `t('todo.title')` 형태 추상화 유지. 1차에서는 임시 한국어 사전 객체로도 충분 | 2차 |

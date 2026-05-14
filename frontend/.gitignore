@@ -1,22 +1,9 @@
-node_modules/
-dist/
-coverage/
-.vite/
-
-# env
+node_modules
+dist
+coverage
 .env
-.env.*
-!.env.example
-
-# editor
-.vscode/
-.idea/
-.DS_Store
-
-# logs
+.env.local
 *.log
-npm-debug.log*
-
-# cache
-.eslintcache
-*.tsbuildinfo
+.DS_Store
+.vscode
+.idea

@@ -1,10 +1,5 @@
-import { BrowserRouter } from 'react-router-dom';
-import AppRoutes from '@/routes';
-
-export default function App() {
-  return (
-    <BrowserRouter>
-      <AppRoutes />
-    </BrowserRouter>
-  );
+function App() {
+  return <div>TodoListApp</div>;
 }
+
+export default App;

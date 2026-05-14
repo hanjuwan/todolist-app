@@ -1,9 +1,12 @@
 'use strict';
 
+const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
+const swaggerUi = require('swagger-ui-express');
 
+const swaggerDocument = require(path.resolve(__dirname, '../../swagger/swagger.json'));
 const env = require('./config/env');
 const { requestLogger } = require('./middlewares/request-logger.middleware');
 const authRouter = require('./modules/auth/auth.router');
@@ -31,6 +34,13 @@ if (env.isProduction) {
 }
 
 app.get('/api/health', (_req, res) => res.json({ success: true, status: 'ok' }));
+
+app.get('/api/docs/swagger.json', (_req, res) => res.json(swaggerDocument));
+app.use(
+  '/api/docs',
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerDocument, { customSiteTitle: 'TodoList API Docs' }),
+);
 
 app.use('/api/auth', authRouter);
 app.use('/api/users', usersRouter);

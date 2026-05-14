@@ -411,54 +411,55 @@ backend/
 │   ├── modules/                    # 도메인 단위 모듈
 │   │   ├── auth/
 │   │   │   ├── auth.router.js      # POST /register, /login, /logout
-│   │   │   ├── auth.service.js     # JWT 발급, 비밀번호 검증
-│   │   │   ├── auth.repository.js  # (필요 시) — auth는 users repo 재사용 가능
-│   │   │   ├── auth.validator.js   # zod 검증 스키마
-│   │   │   └── auth.types.js       # JSDoc @typedef
+│   │   │   ├── auth.service.js     # JWT 발급, 비밀번호 검증 (users.repository 재사용)
+│   │   │   └── auth.validator.js   # zod 검증 스키마 (RegisterSchema, LoginSchema)
 │   │   ├── users/
 │   │   │   ├── users.router.js     # /users/me 조회·수정·탈퇴
 │   │   │   ├── users.service.js
 │   │   │   ├── users.repository.js
-│   │   │   ├── users.validator.js
-│   │   │   └── users.types.js
+│   │   │   └── users.validator.js
 │   │   ├── todos/
 │   │   │   ├── todos.router.js
 │   │   │   ├── todos.service.js
 │   │   │   ├── todos.repository.js
-│   │   │   ├── todos.validator.js
-│   │   │   └── todos.types.js
+│   │   │   └── todos.validator.js
 │   │   └── categories/
 │   │       ├── categories.router.js
 │   │       ├── categories.service.js
 │   │       ├── categories.repository.js
-│   │       ├── categories.validator.js
-│   │       └── categories.types.js
+│   │       └── categories.validator.js
 │   ├── middlewares/
-│   │   ├── auth.middleware.js      # JWT 검증, req.user 주입
-│   │   ├── error.middleware.js     # 통합 에러 핸들러
-│   │   └── request-logger.middleware.js
+│   │   ├── auth.middleware.js              # JWT 검증, req.user 주입
+│   │   ├── error.middleware.js             # 통합 에러 핸들러 (ZodError → 400, AppError → status)
+│   │   ├── request-logger.middleware.js    # [METHOD] /path → STATUS ms 로그
+│   │   └── validate.middleware.js          # zod 스키마 → req.body/query/params 검증 팩토리
 │   ├── db/
-│   │   ├── pool.js                 # pg.Pool 단일 인스턴스
-│   │   ├── migrations/             # SQL 마이그레이션
-│   │   │   ├── 20260513_0001_init_users.sql
-│   │   │   ├── 20260513_0002_init_categories.sql
-│   │   │   └── 20260513_0003_init_todos.sql
-│   │   └── seeds/
-│   │       └── 20260513_default_categories.sql
+│   │   └── pool.js                 # pg.Pool 단일 인스턴스 + healthCheck/shutdown
 │   ├── config/
-│   │   └── env.js                  # 환경변수 로드·검증
+│   │   └── env.js                  # 환경변수 zod 검증 후 Object.freeze export
 │   ├── utils/
-│   │   ├── password.js             # bcrypt wrapper
-│   │   ├── jwt.js                  # jsonwebtoken wrapper
-│   │   └── async-handler.js        # express async error wrapper
-│   ├── app.js                      # Express app 조립 (router, middleware)
-│   └── server.js                   # listen() 진입점
+│   │   ├── app-error.js            # AppError 클래스 (statusCode, code, message, details?)
+│   │   ├── async-handler.js        # express async error wrapper
+│   │   ├── jwt.js                  # jsonwebtoken wrapper (signToken, verifyToken)
+│   │   └── password.js             # bcrypt wrapper (hashPassword, comparePassword)
+│   ├── app.js                      # Express app 조립 (helmet, cors, json, logger, swagger UI, routers)
+│   └── server.js                   # listen() 진입점 + DB healthCheck + graceful shutdown
 ├── .env.example
 ├── .gitignore
-└── package.json                    # "type": "module" (ESM) 또는 CommonJS — 프로젝트 합의에 따름
+└── package.json                    # CommonJS (`require/module.exports`)
+
+# SQL 자산은 backend 외부 프로젝트 루트의 `database/`에 위치한다.
+database/
+├── schema.sql                                            # 통합 스키마 (재실행 안전)
+├── migrations/
+│   ├── 20260513_0001_init_users.sql
+│   ├── 20260513_0002_init_categories.sql
+│   └── 20260513_0003_init_todos.sql
+└── seeds/
+    └── 20260513_0001_default_categories.sql
 ```
 
-> 백엔드는 **순수 JavaScript**(Node.js)로 구현한다. TypeScript·tsconfig·`@types/*`는 두지 않는다. 타입 안전이 필요한 부분은 JSDoc `@typedef`와 zod 런타임 검증으로 대체한다.
+> 백엔드는 **순수 JavaScript**(Node.js, CommonJS)로 구현한다. TypeScript·tsconfig·`@types/*`는 두지 않는다. 타입 안전이 필요한 부분은 zod 런타임 검증으로 대체하며, 필요 시 JSDoc `@typedef`를 인라인으로 사용한다 (별도 `*.types.js` 파일은 MVP 단계에서 생략).
 
 ### 9.2 파일별 역할 / 규칙
 
@@ -468,9 +469,11 @@ backend/
 | `*.service.js` | 비즈니스 규칙(BR-*), 트랜잭션 경계, 검증 결과에 따른 분기 | req/res 접근, 직접 pg 호출 (repository 경유) |
 | `*.repository.js` | pg.Pool/Client로 Parameterized Query 실행, row → 도메인 객체 매핑 | 비즈니스 검증, HTTP 응답 |
 | `*.validator.js` | 입력 스키마 정의(zod) | DB 조회 |
-| `*.types.js` | JSDoc `@typedef`로 DTO·도메인 모델 형태 문서화 | 런타임 코드 |
-| `middlewares/auth.middleware.js` | JWT 검증, `req.user = { id, ... }` 주입, 실패 시 401 | 비즈니스 로직 |
-| `middlewares/error.middleware.js` | 에러 정규화, HTTP 상태 매핑, 친화적 메시지 응답 | 스택트레이스 응답 노출 |
+| `middlewares/auth.middleware.js` | JWT 검증, `req.user = { id }` 주입, 실패 시 401 `UNAUTHENTICATED` | 비즈니스 로직 |
+| `middlewares/validate.middleware.js` | zod 스키마로 `req.body`/`query`/`params` 검증 팩토리 | DB 조회, 비즈니스 로직 |
+| `middlewares/request-logger.middleware.js` | `[METHOD] /path → STATUS ms` 로그 (Authorization·body 미포함) | 비즈니스 로직 |
+| `middlewares/error.middleware.js` | `ZodError → 400 VALIDATION_ERROR`, `AppError → err.statusCode`, 그 외 500 `INTERNAL_ERROR`로 정규화 | 스택트레이스 응답 노출 |
+| `utils/app-error.js` | `AppError(statusCode, code, message, details?)` 클래스 | — |
 | `db/pool.js` | `new Pool(...)` 단일 인스턴스 export | 비즈니스 로직 |
 | `config/env.js` | `process.env` 1회 로드·검증·동결 export | 다른 모듈에서 `process.env` 직접 사용 금지 |
 
@@ -489,7 +492,7 @@ backend/
 |------|------|---------|
 | 단일/단순 쿼리 | Repository 메서드 내 인라인 문자열 | 10줄 미만, 동적 분기 없음 |
 | 복합 동적 쿼리 (예: todos 필터링) | Repository 내 빌더 함수 + 별도 변수로 정리 | WHERE 절이 옵션에 따라 변동 |
-| DDL / 마이그레이션 / 시드 | `db/migrations/`, `db/seeds/` 의 `.sql` 파일 | 스키마 변경 |
+| DDL / 마이그레이션 / 시드 | 프로젝트 루트 `database/migrations/`, `database/seeds/` 의 `.sql` 파일 | 스키마 변경 |
 
 > **MVP 단계:** 별도 `.sql` 파일 분리는 마이그레이션/시드에만 적용. 쿼리 SQL은 인라인 유지.
 

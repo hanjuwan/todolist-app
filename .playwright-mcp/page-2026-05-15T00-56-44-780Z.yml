@@ -1,0 +1,40 @@
+- generic [ref=e124]:
+  - banner [ref=e125]:
+    - generic [ref=e126]: TodoListApp
+    - navigation [ref=e127]:
+      - link "할일 목록" [ref=e128] [cursor=pointer]:
+        - /url: /todos
+      - link "카테고리" [ref=e129] [cursor=pointer]:
+        - /url: /categories
+      - link "마이페이지" [ref=e130] [cursor=pointer]:
+        - /url: /mypage
+      - button "로그아웃" [ref=e131] [cursor=pointer]
+  - generic [ref=e132]:
+    - generic [ref=e133]:
+      - heading "기본 카테고리" [level=2] [ref=e134]
+      - generic [ref=e135]:
+        - generic [ref=e136]: 개인
+        - generic [ref=e137]: 기본
+        - button "수정" [disabled] [ref=e138]
+        - button "삭제" [disabled] [ref=e139]
+      - generic [ref=e140]:
+        - generic [ref=e141]: 기타
+        - generic [ref=e142]: 기본
+        - button "수정" [disabled] [ref=e143]
+        - button "삭제" [disabled] [ref=e144]
+      - generic [ref=e145]:
+        - generic [ref=e146]: 업무
+        - generic [ref=e147]: 기본
+        - button "수정" [disabled] [ref=e148]
+        - button "삭제" [disabled] [ref=e149]
+      - generic [ref=e150]:
+        - generic [ref=e151]: 학습
+        - generic [ref=e152]: 기본
+        - button "수정" [disabled] [ref=e153]
+        - button "삭제" [disabled] [ref=e154]
+    - generic [ref=e155]:
+      - heading "내 카테고리" [level=2] [ref=e156]
+      - paragraph [ref=e157]: 아직 추가한 카테고리가 없습니다.
+      - generic [ref=e160]:
+        - textbox "새 카테고리 이름" [ref=e161]
+        - button "추가" [disabled] [ref=e162]

@@ -1,0 +1,54 @@
+- generic [ref=e18]:
+  - banner [ref=e19]:
+    - generic [ref=e20]: TodoListApp
+    - navigation [ref=e21]:
+      - link "할일 목록" [ref=e22] [cursor=pointer]:
+        - /url: /todos
+      - link "카테고리" [ref=e23] [cursor=pointer]:
+        - /url: /categories
+      - link "마이페이지" [ref=e24] [cursor=pointer]:
+        - /url: /mypage
+      - button "로그아웃" [ref=e25] [cursor=pointer]
+  - main [ref=e26]:
+    - generic [ref=e27]:
+      - heading "할일 목록" [level=1] [ref=e28]
+      - button "새 할일 추가" [ref=e29] [cursor=pointer]
+    - generic [ref=e31]:
+      - button "필터 초기화" [ref=e32] [cursor=pointer]
+      - generic [ref=e33]:
+        - generic [ref=e34]:
+          - generic [ref=e35]: 카테고리
+          - combobox [ref=e36] [cursor=pointer]:
+            - option "전체" [selected]
+            - option "개인"
+            - option "기타"
+            - option "업무"
+            - option "학습"
+        - generic [ref=e37]:
+          - generic [ref=e38]: 완료 여부
+          - generic [ref=e39]:
+            - generic [ref=e40] [cursor=pointer]:
+              - radio "전체" [checked] [ref=e41]
+              - text: 전체
+            - generic [ref=e42] [cursor=pointer]:
+              - radio "완료" [ref=e43]
+              - text: 완료
+            - generic [ref=e44] [cursor=pointer]:
+              - radio "미완료" [ref=e45]
+              - text: 미완료
+        - generic [ref=e46]:
+          - generic [ref=e47]: 종료예정일
+          - generic [ref=e48]:
+            - textbox [ref=e49]
+            - generic [ref=e50]: ~
+            - textbox [ref=e51]
+    - generic [ref=e53]:
+      - generic [ref=e54]:
+        - checkbox [ref=e55] [cursor=pointer]
+        - generic [ref=e56]: Q2 마케팅 보고서 — 최종본
+        - generic [ref=e57]:
+          - button "수정" [ref=e58] [cursor=pointer]
+          - button "삭제" [ref=e59] [cursor=pointer]
+      - generic [ref=e60]:
+        - generic [ref=e61]: 업무
+        - generic [ref=e62]: "마감: 2026-05-20"

@@ -1,0 +1,53 @@
+- generic [ref=e167]:
+  - banner [ref=e168]:
+    - generic [ref=e169]: TodoListApp
+    - navigation [ref=e170]:
+      - link "할일 목록" [ref=e171] [cursor=pointer]:
+        - /url: /todos
+      - link "카테고리" [ref=e172] [cursor=pointer]:
+        - /url: /categories
+      - link "마이페이지" [ref=e173] [cursor=pointer]:
+        - /url: /mypage
+      - button "로그아웃" [ref=e174] [cursor=pointer]
+  - main [ref=e175]:
+    - generic [ref=e176]:
+      - heading "할일 목록" [level=1] [ref=e177]
+      - button "새 할일 추가" [ref=e178] [cursor=pointer]
+    - generic [ref=e180]:
+      - button "필터 초기화" [ref=e181] [cursor=pointer]
+      - generic [ref=e182]:
+        - generic [ref=e183]:
+          - generic [ref=e184]: 카테고리
+          - combobox [ref=e185] [cursor=pointer]:
+            - option "전체"
+            - option "개인"
+            - option "기타"
+            - option "업무"
+            - option "학습"
+            - option "마케팅 프로젝트" [selected]
+        - generic [ref=e186]:
+          - generic [ref=e187]: 완료 여부
+          - generic [ref=e188]:
+            - generic [ref=e189] [cursor=pointer]:
+              - radio "전체" [checked] [ref=e190]
+              - text: 전체
+            - generic [ref=e191] [cursor=pointer]:
+              - radio "완료" [ref=e192]
+              - text: 완료
+            - generic [ref=e193] [cursor=pointer]:
+              - radio "미완료" [ref=e194]
+              - text: 미완료
+        - generic [ref=e195]:
+          - generic [ref=e196]: 종료예정일
+          - generic [ref=e197]:
+            - textbox [ref=e198]
+            - generic [ref=e199]: ~
+            - textbox [ref=e200]
+    - generic [ref=e244]:
+      - generic [ref=e245]:
+        - checkbox [ref=e246] [cursor=pointer]
+        - generic [ref=e247]: SNS 콘텐츠 캘린더 작성
+        - generic [ref=e248]:
+          - button "수정" [ref=e249] [cursor=pointer]
+          - button "삭제" [ref=e250] [cursor=pointer]
+      - generic [ref=e252]: 마케팅 프로젝트

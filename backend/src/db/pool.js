@@ -1,7 +1,9 @@
 'use strict';
 
-const { Pool } = require('pg');
+const { Pool, types } = require('pg');
 const env = require('../config/env');
+
+types.setTypeParser(1082, (val) => val);
 
 const pool = new Pool({
   connectionString: env.postgresConnectionString,

@@ -1,0 +1,179 @@
+- generic [ref=e18]:
+  - banner [ref=e19]:
+    - generic [ref=e20]: TodoListApp
+    - navigation [ref=e21]:
+      - link "할일 목록" [ref=e22] [cursor=pointer]:
+        - /url: /todos
+      - link "카테고리" [ref=e23] [cursor=pointer]:
+        - /url: /categories
+      - link "마이페이지" [ref=e24] [cursor=pointer]:
+        - /url: /mypage
+      - button "로그아웃" [ref=e25] [cursor=pointer]
+  - main [ref=e26]:
+    - generic [ref=e27]:
+      - heading "할일 목록" [level=1] [ref=e28]
+      - button "새 할일 추가" [active] [ref=e29] [cursor=pointer]
+    - generic [ref=e31]:
+      - button "필터 초기화" [ref=e32] [cursor=pointer]
+      - generic [ref=e33]:
+        - generic [ref=e34]:
+          - generic [ref=e35]: 카테고리
+          - combobox [ref=e36] [cursor=pointer]:
+            - option "전체" [selected]
+            - option "개인"
+            - option "기타"
+            - option "업무"
+            - option "학습"
+        - generic [ref=e37]:
+          - generic [ref=e38]: 완료 여부
+          - generic [ref=e39]:
+            - generic [ref=e40] [cursor=pointer]:
+              - radio "전체" [checked] [ref=e41]
+              - text: 전체
+            - generic [ref=e42] [cursor=pointer]:
+              - radio "완료" [ref=e43]
+              - text: 완료
+            - generic [ref=e44] [cursor=pointer]:
+              - radio "미완료" [ref=e45]
+              - text: 미완료
+        - generic [ref=e46]:
+          - generic [ref=e47]: 종료예정일
+          - generic [ref=e48]:
+            - textbox [ref=e49]
+            - generic [ref=e50]: ~
+            - textbox [ref=e51]
+    - generic [ref=e53]:
+      - generic [ref=e54]:
+        - button "이전 달" [ref=e55] [cursor=pointer]: ◀
+        - generic [ref=e56]: 2026년 5월
+        - button "다음 달" [ref=e57] [cursor=pointer]: ▶
+      - generic [ref=e58]:
+        - generic [ref=e59]: 일
+        - generic [ref=e60]: 월
+        - generic [ref=e61]: 화
+        - generic [ref=e62]: 수
+        - generic [ref=e63]: 목
+        - generic [ref=e64]: 금
+        - generic [ref=e65]: 토
+      - generic [ref=e66]:
+        - button "2026-04-26 날짜 선택" [ref=e67] [cursor=pointer]:
+          - generic [ref=e68]: "26"
+        - button "2026-04-27 날짜 선택" [ref=e69] [cursor=pointer]:
+          - generic [ref=e70]: "27"
+        - button "2026-04-28 날짜 선택" [ref=e71] [cursor=pointer]:
+          - generic [ref=e72]: "28"
+        - button "2026-04-29 날짜 선택" [ref=e73] [cursor=pointer]:
+          - generic [ref=e74]: "29"
+        - button "2026-04-30 날짜 선택" [ref=e75] [cursor=pointer]:
+          - generic [ref=e76]: "30"
+        - button "2026-05-01 날짜 선택" [ref=e77] [cursor=pointer]:
+          - generic [ref=e78]: "1"
+        - button "2026-05-02 날짜 선택" [ref=e79] [cursor=pointer]:
+          - generic [ref=e80]: "2"
+        - button "2026-05-03 날짜 선택" [ref=e81] [cursor=pointer]:
+          - generic [ref=e82]: "3"
+        - button "2026-05-04 날짜 선택" [ref=e83] [cursor=pointer]:
+          - generic [ref=e84]: "4"
+        - button "2026-05-05 날짜 선택" [ref=e85] [cursor=pointer]:
+          - generic [ref=e86]: "5"
+        - button "2026-05-06 날짜 선택" [ref=e87] [cursor=pointer]:
+          - generic [ref=e88]: "6"
+        - button "2026-05-07 날짜 선택" [ref=e89] [cursor=pointer]:
+          - generic [ref=e90]: "7"
+        - button "2026-05-08 날짜 선택" [ref=e91] [cursor=pointer]:
+          - generic [ref=e92]: "8"
+        - button "2026-05-09 날짜 선택" [ref=e93] [cursor=pointer]:
+          - generic [ref=e94]: "9"
+        - button "2026-05-10 날짜 선택" [ref=e95] [cursor=pointer]:
+          - generic [ref=e96]: "10"
+        - button "2026-05-11 날짜 선택" [ref=e97] [cursor=pointer]:
+          - generic [ref=e98]: "11"
+        - button "2026-05-12 날짜 선택" [ref=e99] [cursor=pointer]:
+          - generic [ref=e100]: "12"
+        - button "2026-05-13 날짜 선택" [ref=e101] [cursor=pointer]:
+          - generic [ref=e102]: "13"
+        - button "2026-05-14 날짜 선택" [ref=e103] [cursor=pointer]:
+          - generic [ref=e104]: "14"
+        - button "2026-05-15 날짜 선택" [ref=e105] [cursor=pointer]:
+          - generic [ref=e106]: "15"
+        - button "2026-05-16 날짜 선택" [ref=e107] [cursor=pointer]:
+          - generic [ref=e108]: "16"
+        - button "2026-05-17 날짜 선택" [ref=e109] [cursor=pointer]:
+          - generic [ref=e110]: "17"
+        - button "2026-05-18 날짜 선택" [ref=e111] [cursor=pointer]:
+          - generic [ref=e112]: "18"
+        - button "2026-05-19 날짜 선택" [ref=e113] [cursor=pointer]:
+          - generic [ref=e114]: "19"
+        - button "2026-05-20 날짜 선택" [ref=e115] [cursor=pointer]:
+          - generic [ref=e116]: "20"
+          - generic "Q2 마케팅 보고서 — 최종본" [ref=e118]
+        - button "2026-05-21 날짜 선택" [ref=e119] [cursor=pointer]:
+          - generic [ref=e120]: "21"
+        - button "2026-05-22 날짜 선택" [ref=e121] [cursor=pointer]:
+          - generic [ref=e122]: "22"
+        - button "2026-05-23 날짜 선택" [ref=e123] [cursor=pointer]:
+          - generic [ref=e124]: "23"
+        - button "2026-05-24 날짜 선택" [ref=e125] [cursor=pointer]:
+          - generic [ref=e126]: "24"
+        - button "2026-05-25 날짜 선택" [ref=e127] [cursor=pointer]:
+          - generic [ref=e128]: "25"
+        - button "2026-05-26 날짜 선택" [ref=e129] [cursor=pointer]:
+          - generic [ref=e130]: "26"
+        - button "2026-05-27 날짜 선택" [ref=e131] [cursor=pointer]:
+          - generic [ref=e132]: "27"
+        - button "2026-05-28 날짜 선택" [ref=e133] [cursor=pointer]:
+          - generic [ref=e134]: "28"
+        - button "2026-05-29 날짜 선택" [ref=e135] [cursor=pointer]:
+          - generic [ref=e136]: "29"
+        - button "2026-05-30 날짜 선택" [ref=e137] [cursor=pointer]:
+          - generic [ref=e138]: "30"
+        - button "2026-05-31 날짜 선택" [ref=e139] [cursor=pointer]:
+          - generic [ref=e140]: "31"
+        - button "2026-06-01 날짜 선택" [ref=e141] [cursor=pointer]:
+          - generic [ref=e142]: "1"
+        - button "2026-06-02 날짜 선택" [ref=e143] [cursor=pointer]:
+          - generic [ref=e144]: "2"
+        - button "2026-06-03 날짜 선택" [ref=e145] [cursor=pointer]:
+          - generic [ref=e146]: "3"
+        - button "2026-06-04 날짜 선택" [ref=e147] [cursor=pointer]:
+          - generic [ref=e148]: "4"
+        - button "2026-06-05 날짜 선택" [ref=e149] [cursor=pointer]:
+          - generic [ref=e150]: "5"
+        - button "2026-06-06 날짜 선택" [ref=e151] [cursor=pointer]:
+          - generic [ref=e152]: "6"
+    - generic [ref=e154]:
+      - generic [ref=e155]:
+        - checkbox [ref=e156] [cursor=pointer]
+        - generic [ref=e157]: Q2 마케팅 보고서 — 최종본
+        - generic [ref=e158]:
+          - button "수정" [ref=e159] [cursor=pointer]
+          - button "삭제" [ref=e160] [cursor=pointer]
+      - generic [ref=e161]:
+        - generic [ref=e162]: 업무
+        - generic [ref=e163]: "마감: 2026-05-20"
+  - dialog "새 할일 추가" [ref=e165]:
+    - heading "새 할일 추가" [level=2] [ref=e167]
+    - generic [ref=e168]:
+      - generic [ref=e169]:
+        - generic [ref=e170]:
+          - generic [ref=e171]: 제목 *
+          - textbox "제목 *" [ref=e172]
+        - generic [ref=e173]:
+          - generic [ref=e174]: 카테고리 *
+          - combobox "카테고리 *" [ref=e175]:
+            - option "개인" [selected]
+            - option "기타"
+            - option "업무"
+            - option "학습"
+        - generic [ref=e176]:
+          - generic [ref=e177]: 시작일
+          - textbox "시작일" [ref=e178]
+        - generic [ref=e179]:
+          - generic [ref=e180]: 마감일
+          - textbox "마감일" [ref=e181]
+        - generic [ref=e182]:
+          - generic [ref=e183]: 설명
+          - textbox "설명" [ref=e184]
+      - generic [ref=e185]:
+        - button "취소" [ref=e186] [cursor=pointer]
+        - button "저장" [ref=e187] [cursor=pointer]

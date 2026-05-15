@@ -573,213 +573,239 @@
 
 ### Task FE-02: Feature 디렉토리 / 공통 타입 셋업
 
-- **목표**: Feature 기반 폴더 + shared/lib/pages + 공통 타입.
-- **담당 영역**: Frontend
-- **예상 소요**: 1시간
-- **의존성**: FE-01
-- **완료 조건 (체크박스)**:
-  - [ ] `src/features/{auth,todos,categories,users}/` 하위 `components/hooks/api/types/` 생성 (auth는 `store/` 추가)
-  - [ ] `src/shared/{components,hooks,utils,types}/` 생성
-  - [ ] `src/lib/`, `src/pages/`, `src/routes/` 생성
-  - [ ] `src/shared/types/index.ts`에 `ApiError` 클래스 + `ApiErrorBody`, `Pagination`, `PaginatedResponse` 정의 (백엔드 `error.middleware.js` 스키마 정합)
-  - [ ] 각 feature 도메인 타입 파일 초기 생성 — `auth.types.ts` (LoginRequest/RegisterRequest/LoginResponse/AuthState), `user.types.ts` (User/UpdateProfileRequest/WithdrawRequest), `todo.types.ts` (Todo/CreateTodoRequest/UpdateTodoRequest/ToggleCompleteRequest/TodoListFilters), `category.types.ts` (Category/CreateCategoryRequest/UpdateCategoryRequest) — 백엔드 `mapRow` 결과 shape과 일치
-- **산출물**: 디렉토리 트리(빈 디렉토리는 `.gitkeep`), `src/shared/types/index.ts`, 각 feature `types/*.types.ts`, `src/__tests__/fe-02-structure.test.ts`
-- **검증**: `npm test` 28 tests passed (FE-02 디렉토리 24개 존재 검증 + ApiError 인스턴스 + 4개 도메인 타입 모듈 import) / `npm run lint` 0 errors / `npm run build` tsc + vite 성공
-- **참고**: 구조 원칙 8.1~8.3
+**목표**: Feature 기반 폴더 + shared/lib/pages + 공통 타입.
+
+**담당 영역**: Frontend · **예상 소요**: 1시간 · **실제 처리 시간**: 5분 (2026-05-14) · **의존성**: FE-01
+
+**완료 조건 (체크박스)**
+
+- [x] `src/features/{auth,todos,categories,users}/` 하위 `components/hooks/api/types/` 생성 (auth는 `store/` 추가)
+- [x] `src/shared/{components,hooks,utils,types}/` 생성
+- [x] `src/lib/`, `src/pages/`, `src/routes/` 생성
+- [x] `src/shared/types/index.ts`에 `ApiError` 클래스 + `ApiErrorBody`, `Pagination`, `PaginatedResponse` 정의 (백엔드 `error.middleware.js` 스키마 정합)
+- [x] 각 feature 도메인 타입 파일 초기 생성 — `auth.types.ts` (LoginRequest/RegisterRequest/LoginResponse/AuthState), `user.types.ts` (User/UpdateProfileRequest/WithdrawRequest), `todo.types.ts` (Todo/CreateTodoRequest/UpdateTodoRequest/ToggleCompleteRequest/TodoListFilters), `category.types.ts` (Category/CreateCategoryRequest/UpdateCategoryRequest) — 백엔드 `mapRow` 결과 shape과 일치
+
+**산출물**: 디렉토리 트리(빈 디렉토리는 `.gitkeep`), `src/shared/types/index.ts`, 각 feature `types/*.types.ts`, `src/__tests__/fe-02-structure.test.ts`
+
+**검증**: `npm test` 31 tests passed (FE-02 디렉토리 24개 존재 검증 + ApiError 인스턴스 + 4개 도메인 타입 모듈 import + smoke 2건) / `npm run lint` 0 errors / `npm run build` tsc + vite 759ms 성공
+
+**참고**: 구조 원칙 8.1~8.3
 
 ---
 
 ### Task FE-03: axios 클라이언트 + 인터셉터
 
-- **목표**: 토큰 자동 부착 + 401 자동 로그아웃.
-- **담당 영역**: Frontend
-- **예상 소요**: 1.5시간
-- **의존성**: FE-01, FE-02
-- **완료 조건 (체크박스)**:
-  - [ ] `lib/api-client.ts`에 axios 인스턴스, `baseURL = import.meta.env.VITE_API_BASE_URL ?? '/api'`, 10s 타임아웃, JSON Content-Type 기본
-  - [ ] Request 인터셉터: `useAuthStore.getState().token` → `Authorization: Bearer <token>` (토큰 없으면 헤더 미부착)
-  - [ ] Response 인터셉터: 401 → `clearToken()` + `window.location.href = '/login'` (현재 경로가 `/login`이면 재이동 생략)
-  - [ ] 에러 응답을 `ApiError`로 정규화 — 백엔드 `{ success: false, error: { code, message, details? } }` 스키마 매핑, 네트워크 에러 `NETWORK_ERROR`, 타임아웃 `TIMEOUT`, 비표준 응답 `UNKNOWN_ERROR`
-  - [ ] localStorage/sessionStorage/Cookie 토큰 접근 코드 없음 _(소스 정적 grep 테스트로 검증, zustand persist 미사용)_
-- **산출물**: `lib/api-client.ts`, `features/auth/store/auth-store.ts` (FE-04에서 확장), `lib/__tests__/api-client.test.ts`
-- **검증**: `npm test` 40 tests passed (api-client 12건: baseURL, Bearer 부착/미부착, 4xx 정규화, validation details 보존, 401 clear+redirect, /login 중복 redirect 차단, network/timeout/비표준 응답, 보안 grep 2건) / `npm run lint` 0 errors / `npm run build` 성공
-- **참고**: PRD 7.2, SCN-13
+**목표**: 토큰 자동 부착 + 401 자동 로그아웃.
+
+**담당 영역**: Frontend · **예상 소요**: 1.5시간 · **실제 처리 시간**: 8분 (2026-05-14) · **의존성**: FE-01, FE-02
+
+**완료 조건 (체크박스)**
+
+- [x] `lib/api-client.ts`에 axios 인스턴스, `baseURL = import.meta.env.VITE_API_BASE_URL ?? '/api'`, 10s 타임아웃, JSON Content-Type 기본
+- [x] Request 인터셉터: `useAuthStore.getState().token` → `Authorization: Bearer <token>` (토큰 없으면 헤더 미부착)
+- [x] Response 인터셉터: 401 → `clearToken()` + `window.location.href = '/login'` (현재 경로가 `/login`이면 재이동 생략)
+- [x] 에러 응답을 `ApiError`로 정규화 — 백엔드 `{ success: false, error: { code, message, details? } }` 스키마 매핑, 네트워크 에러 `NETWORK_ERROR`, 타임아웃 `TIMEOUT`, 비표준 응답 `UNKNOWN_ERROR`
+- [x] localStorage/sessionStorage/Cookie 토큰 접근 코드 없음 _(소스 정적 grep 테스트로 검증, zustand persist 미사용)_
+
+**산출물**: `lib/api-client.ts`, `features/auth/store/auth-store.ts` (FE-04에서 확장), `lib/__tests__/api-client.test.ts`
+
+**검증**: `npm test` 45 tests passed (api-client 14건: baseURL/Content-Type/timeout, Bearer 부착·미부착, 4xx 정규화, validation details 보존, network/timeout/비표준 5xx, 401 clear+redirect, /login 중복 redirect 차단, 보안 grep 2건) / `npm run lint` 0 errors / `npm run build` 710ms 성공
+
+**참고**: PRD 7.2, SCN-13
 
 ---
 
 ### Task FE-04: Zustand `useAuthStore` + TanStack Query Provider
 
-- **목표**: 인메모리 토큰 스토어 + Query Provider.
-- **담당 영역**: Frontend
-- **예상 소요**: 1시간
-- **의존성**: FE-01, FE-02
-- **완료 조건 (체크박스)**:
-  - [ ] `useAuthStore` — `token`, `user`, `isAuthenticated`, `setToken(token, user)`, `clearToken()` (FE-03에서 선구현, FE-04에서 단위 테스트 보강)
-  - [ ] Zustand `persist` 미들웨어 미사용 — `setToken` 호출 후 localStorage/sessionStorage에 토큰 미저장을 단위 테스트로 검증
-  - [ ] `lib/query-client.ts`에 `QueryClient` 단일 인스턴스 export — `staleTime: 30s`, `gcTime: 5min`, `retry`: 4xx 즉시 중단 + 5xx 최대 2회, `refetchOnWindowFocus: false`, `mutations.retry: false`
-  - [ ] `QueryClientProvider`로 앱 래핑 — `main.tsx`에서 `<StrictMode><QueryClientProvider client={queryClient}><App/>` 구조
-  - [ ] 새로고침 시 토큰 소멸 → 비로그인 전환 — 인메모리만 사용하므로 자연스럽게 휘발 (store 초기 상태가 `{token: null, isAuthenticated: false}`, persist 미사용으로 영속 복원 경로 없음 — 테스트로 보장)
-- **산출물**: `features/auth/store/auth-store.ts`, `lib/query-client.ts`, `main.tsx`, `features/auth/store/__tests__/auth-store.test.ts`, `lib/__tests__/query-client.test.tsx`
-- **검증**: `npm test` 49 tests passed (auth-store 4건 — 초기 상태/setToken/clearToken/영속화 부재 + query-client 5건 — 단일 인스턴스/4xx 재시도 차단/5xx 2회 재시도/mutations.retry=false/Provider 통합 렌더링) / `npm run lint` 0 errors / `npm run build` 성공 (222.28kB — TanStack Query 추가됨)
-- **참고**: PRD FR-02/FR-03, SCN-13
+**목표**: 인메모리 토큰 스토어 + Query Provider.
+
+**담당 영역**: Frontend · **예상 소요**: 1시간 · **실제 처리 시간**: 5분 (2026-05-14) · **의존성**: FE-01, FE-02
+
+**완료 조건 (체크박스)**
+
+- [x] `useAuthStore` — `token`, `user`, `isAuthenticated`, `setToken(token, user)`, `clearToken()` (FE-03에서 선구현, FE-04에서 단위 테스트 보강)
+- [x] Zustand `persist` 미들웨어 미사용 — `setToken` 호출 후 localStorage/sessionStorage에 토큰 미저장을 단위 테스트로 검증
+- [x] `lib/query-client.ts`에 `QueryClient` 단일 인스턴스 export — `staleTime: 30s`, `gcTime: 5min`, `retry`: 4xx 즉시 중단 + 5xx 최대 2회, `refetchOnWindowFocus: false`, `mutations.retry: false`
+- [x] `QueryClientProvider`로 앱 래핑 — `main.tsx`에서 `<StrictMode><QueryClientProvider client={queryClient}><App/>` 구조
+- [x] 새로고침 시 토큰 소멸 → 비로그인 전환 — 인메모리만 사용하므로 자연스럽게 휘발 (store 초기 상태가 `{token: null, isAuthenticated: false}`, persist 미사용으로 영속 복원 경로 없음 — 테스트로 보장)
+
+**산출물**: `features/auth/store/auth-store.ts`, `lib/query-client.ts`, `main.tsx`, `features/auth/store/__tests__/auth-store.test.ts`, `lib/__tests__/query-client.test.tsx`
+
+**검증**: `npm test` 55 tests passed (auth-store 4건 — 초기 상태/setToken/clearToken/영속화 부재 + query-client 6건 — 단일 인스턴스/staleTime·gcTime·refetchOnWindowFocus/4xx 재시도 차단/5xx 2회 재시도/mutations.retry=false/Provider 통합 렌더링) / `npm run lint` 0 errors / `npm run build` 222.16kB 성공 (830ms)
+
+**참고**: PRD FR-02/FR-03, SCN-13
 
 ---
 
 ### Task FE-05: React Router + Protected Route
 
-- **목표**: 라우팅 + 인증 가드.
-- **담당 영역**: Frontend
-- **예상 소요**: 1시간
-- **의존성**: FE-04
-- **완료 조건 (체크박스)**:
-  - [ ] 라우터 정의 — `/login`, `/register`, `/todos`, `/categories`, `/mypage`, `/` 폴백, `*` 미정의 경로 폴백
-  - [ ] `ProtectedRoute` — 비로그인 시 `<Navigate to="/login" replace state={{from}}/>`, `useAuthStore`의 `isAuthenticated` 셀렉터 구독
-  - [ ] 비로그인 상태 `/todos` 접근 → `/login` 리다이렉트 (테스트 검증)
-  - [ ] 로그인 상태 `/login` 접근 → `/todos` 리다이렉트 (`PublicOnlyRoute` 추가)
-- **산출물**: `routes/index.tsx`, `routes/ProtectedRoute.tsx`, `routes/PublicOnlyRoute.tsx`, `pages/{Login,Register,TodoList,Categories,My}Page.tsx` (스텁), `App.tsx` (BrowserRouter 래핑), `routes/__tests__/routes.test.tsx`
-- **검증**: `npm test` 62 tests passed (라우팅 13건 — 비로그인 시 3개 보호 경로 모두 /login 리다이렉트, /login·/register 정상 노출, 로그인 시 /login·/register → /todos 리다이렉트, 보호 경로 정상 렌더, / 폴백 두 케이스, 미정의 경로 폴백) / `npm run lint` 0 errors / `npm run build` 261.55kB 성공
-- **참고**: PRD FR-06, 9.2
+**목표**: 라우팅 + 인증 가드.
+
+**담당 영역**: Frontend · **예상 소요**: 1시간 · **실제 처리 시간**: 6분 (2026-05-14) · **의존성**: FE-04
+
+**완료 조건 (체크박스)**
+
+- [x] 라우터 정의 — `/login`, `/register`, `/todos`, `/categories`, `/mypage`, `/` 폴백, `*` 미정의 경로 폴백
+- [x] `ProtectedRoute` — 비로그인 시 `<Navigate to="/login" replace state={{from}}/>`, `useAuthStore`의 `isAuthenticated` 셀렉터 구독
+- [x] 비로그인 상태 `/todos` 접근 → `/login` 리다이렉트 (테스트 검증)
+- [x] 로그인 상태 `/login` 접근 → `/todos` 리다이렉트 (`PublicOnlyRoute` 추가)
+
+**산출물**: `routes/index.tsx`, `routes/ProtectedRoute.tsx`, `routes/PublicOnlyRoute.tsx`, `pages/{Login,Register,TodoList,Categories,My}Page.tsx` (스텁), `App.tsx` (BrowserRouter 래핑), `routes/__tests__/routes.test.tsx`
+
+**검증**: `npm test` 69 tests passed (라우팅 14건 — 비로그인 시 3개 보호 경로 모두 /login 리다이렉트, /login·/register 정상 노출, / 및 미정의 경로 폴백, 로그인 시 /login·/register → /todos 리다이렉트, 보호 경로 3개 정상 렌더, / 및 미정의 경로 → /todos 폴백) / `npm run lint` 0 errors / `npm run build` 261.46kB 성공 (1.05s)
+
+**참고**: PRD FR-06, 9.2
 
 ---
 
 ### Task FE-06: zod 스키마 + 공통 유틸
 
-- **목표**: 폼 검증 zod 스키마 + 날짜 유틸.
-- **담당 영역**: Frontend
-- **예상 소요**: 1시간
-- **의존성**: FE-02
-- **완료 조건 (체크박스)**:
-  - [ ] 회원가입/로그인 스키마 — `LoginSchema`, `RegisterSchema`(passwordConfirm refine 포함) (백엔드 `auth.validator.js`와 정합, zod ^3.23.8)
-  - [ ] 할일 스키마 — `CreateTodoSchema`, `UpdateTodoSchema`(nullable dueDate/description), `TodoListFiltersSchema`(from≤to refine)
-  - [ ] 카테고리 스키마 — `CreateCategorySchema`, `UpdateCategorySchema` (1~50자)
-  - [ ] 사용자 스키마 — `UpdateProfileSchema`(currentPassword↔newPassword 동반 refine + newPasswordConfirm 일치 refine), `WithdrawSchema`
-  - [ ] 날짜 범위 `from <= to` `.refine()` 검증 — `TodoListFiltersSchema`
-  - [ ] `shared/utils/date.ts` — `ISO_DATE_REGEX`, `isIsoDate`(2/29 윤년 검증 포함), `formatIsoDate`, `today()`
-- **산출물**: `features/auth/auth.schemas.ts`, `features/users/users.schemas.ts`, `features/todos/todos.schemas.ts`, `features/categories/categories.schemas.ts`, `shared/utils/date.ts`, `features/__tests__/schemas.test.ts`, `shared/utils/__tests__/date.test.ts`
-- **검증**: `npm test` 97 tests passed (스키마 29건 — Login/Register 비밀번호 확인·refine, UpdateProfile 4가지 케이스, Withdraw, CreateTodo UUID/제목/dueDate 형식, UpdateTodo nullable, TodoListFilters from>to 실패·단독 허용, Category 최대길이 + date 유틸 6건 — regex/유효성/윤년/존재하지 않는 날짜/포맷/today fake timer) / `npm run lint` 0 errors / `npm run build` 성공
-- **참고**: SCN-04, SCN-02
+**목표**: 폼 검증 zod 스키마 + 날짜 유틸.
+
+**담당 영역**: Frontend · **예상 소요**: 1시간 · **실제 처리 시간**: 7분 (2026-05-14) · **의존성**: FE-02
+
+**완료 조건 (체크박스)**
+
+- [x] 회원가입/로그인 스키마 — `LoginSchema`, `RegisterSchema`(passwordConfirm refine 포함) (백엔드 `auth.validator.js`와 정합, zod ^3.23.8)
+- [x] 할일 스키마 — `CreateTodoSchema`, `UpdateTodoSchema`(nullable dueDate/description), `TodoListFiltersSchema`(from≤to refine)
+- [x] 카테고리 스키마 — `CreateCategorySchema`, `UpdateCategorySchema` (1~50자)
+- [x] 사용자 스키마 — `UpdateProfileSchema`(currentPassword↔newPassword 동반 refine + newPasswordConfirm 일치 refine), `WithdrawSchema`
+- [x] 날짜 범위 `from <= to` `.refine()` 검증 — `TodoListFiltersSchema`
+- [x] `shared/utils/date.ts` — `ISO_DATE_REGEX`, `isIsoDate`(2/29 윤년 검증 포함), `formatIsoDate`, `today()`
+
+**산출물**: `features/auth/auth.schemas.ts`, `features/users/users.schemas.ts`, `features/todos/todos.schemas.ts`, `features/categories/categories.schemas.ts`, `shared/utils/date.ts`, `features/__tests__/schemas.test.ts`, `shared/utils/__tests__/date.test.ts`
+
+**검증**: `npm test` 105 tests passed (schemas 27건 — Login 2, Register 4, UpdateProfile 5, Withdraw 2, CreateTodo 4, UpdateTodo 3, TodoListFilters 4, Category 3 + date 유틸 9건 — regex 3, 윤년/존재불가/형식 5, formatIsoDate 2, today fake timer 1) / `npm run lint` 0 errors / `npm run build` 261.46kB 성공 (1.03s)
+
+**참고**: SCN-04, SCN-02
 
 ---
 
-### Task FE-07: SCR-01 로그인 / SCR-02 회원가입
+### Task FE-07: SCR-01 로그인 / SCR-02 회원가입 — ✅ 완료 (2026-05-15)
 
 - **목표**: 로그인/회원가입 화면.
 - **담당 영역**: Frontend
 - **예상 소요**: 2.5시간
+- **실제 처리 시간**: 약 15분 (2026-05-15)
 - **의존성**: FE-03~06, BE-07 완료 필요
 - **완료 조건 (체크박스)**:
-  - [ ] SCR-01: 이메일·비밀번호 폼, 로그인하기 버튼, 회원가입 링크 (`Link to="/register"`), `noValidate`로 브라우저 검증 비활성화 후 zod로 일원화
-  - [ ] 로그인 성공 시 `setToken(accessToken, user)` 후 `navigate('/todos')`
-  - [ ] 로그인 실패(401) 시 친화적 문구 — "이메일 또는 비밀번호가 올바르지 않습니다." + 비밀번호 필드 자동 초기화 (SCN-12)
-  - [ ] SCR-02: 이름·이메일·비밀번호·비밀번호 확인 + zod 실시간 검증 (`onChange`마다 `RegisterSchema.safeParse`)
-  - [ ] 회원가입 성공 시 `/login` 이동 + `location.state.registered`로 안내 배너 표시
-  - [ ] 중복 이메일(409 `EMAIL_DUPLICATED`) 인라인 오류 — 이메일 필드 하단 "이미 사용 중인 이메일입니다."
-  - [ ] 비밀번호 show/hide 토글 — `PasswordInput` 공통 컴포넌트 (`aria-pressed`, `aria-label` 토글)
+  - [x] SCR-01: 이메일·비밀번호 폼, 로그인하기 버튼, 회원가입 링크 (`Link to="/register"`), `noValidate`로 브라우저 검증 비활성화 후 zod로 일원화
+  - [x] 로그인 성공 시 `setToken(accessToken, user)` 후 `navigate('/todos')`
+  - [x] 로그인 실패(401) 시 친화적 문구 — "이메일 또는 비밀번호가 올바르지 않습니다." + 비밀번호 필드 자동 초기화 (SCN-12)
+  - [x] SCR-02: 이름·이메일·비밀번호·비밀번호 확인 + zod 실시간 검증 (`onChange`마다 `RegisterSchema.safeParse`)
+  - [x] 회원가입 성공 시 `/login` 이동 + `location.state.registered`로 안내 배너 표시
+  - [x] 중복 이메일(409 `EMAIL_DUPLICATED`) 인라인 오류 — 이메일 필드 하단 "이미 사용 중인 이메일입니다."
+  - [x] 비밀번호 show/hide 토글 — `PasswordInput` 공통 컴포넌트 (`aria-pressed`, `aria-label` 토글)
 - **산출물**: `features/auth/api/auth-api.ts`, `features/auth/hooks/use-{login,register}.ts`, `features/auth/components/{LoginForm,RegisterForm}.tsx`, `shared/components/PasswordInput.tsx`, `pages/{LoginPage,RegisterPage}.tsx`, `features/auth/components/__tests__/{LoginForm,RegisterForm}.test.tsx`, `src/test-setup.ts` (jest-dom 매처 + 자동 cleanup)
-- **검증**: `npm test` 107 tests passed (LoginForm 5건 — 이메일 형식 인라인 오류·성공→ /todos 이동·401 친화 문구+비밀번호 초기화·회원가입 링크 이동·show/hide 토글 + RegisterForm 5건 — 실시간 비밀번호 불일치/8자 미만·성공→ /login+배너·409 인라인 오류·show/hide 토글) / `npm run lint` 0 errors / `npm run build` 366.53kB 성공
+- **검증**: `npm test` 115 tests passed (LoginForm 5건 — 이메일 형식 인라인 오류·성공→ /todos 이동·401 친화 문구+비밀번호 초기화·회원가입 링크 이동·show/hide 토글 + RegisterForm 5건 — 비밀번호 8자 미만·비밀번호 불일치·성공→ /login+state.registered·409 인라인 오류·show/hide 토글) / `npm run build` 성공
 - **참고**: FR-01, FR-02, SCR-01/02, SCN-01/11/12
 
 ---
 
-### Task FE-08: SCR-03 할일 목록 + 복합 필터
+### Task FE-08: SCR-03 할일 목록 + 복합 필터 — ✅ 완료 (2026-05-15)
 
 - **목표**: 할일 카드 목록 + 3개 필터 즉시 갱신.
 - **담당 영역**: Frontend
 - **예상 소요**: 3시간
+- **실제 처리 시간**: 약 20분 (2026-05-15)
 - **의존성**: FE-03~05, BE-10/11/09 완료 필요
 - **완료 조건 (체크박스)**:
-  - [ ] 기본 정렬 카드 목록 렌더링 — 백엔드 `created_at DESC`, `TodoCard`로 제목/카테고리/마감일 표시, 완료 항목은 `line-through` 스타일
-  - [ ] 필터 바 — 카테고리 select / 완료 여부 라디오(전체/완료/미완료) / 종료예정일 from-to date input
-  - [ ] 필터 변경 시 queryKey 변경으로 즉시 재호출 — `todosQueryKey(filters)` 직렬화, TanStack Query가 자동 refetch
-  - [ ] `dueDateFrom > dueDateTo` 시 클라이언트 차단 — `FilterBar` 내부 검증, 인라인 `filter-range-error` 메시지 + `onChange` 미호출
-  - [ ] 빈 결과 시 빈 상태 UI — 필터 미적용 시 "첫 번째 할일을 등록해 보세요!", 필터 적용 시 "해당 조건에 맞는 할일이 없습니다." + 필터 초기화 버튼
-  - [ ] 필터 초기화 버튼 — `setFilters({})`, FilterBar 우상단 + 빈 상태 내부 2곳 노출
-  - [ ] 본인 할일만 표시 (BR-U3) — 백엔드 미들웨어에서 `WHERE user_id = $1` 강제, 프론트는 JWT만 부착
-  - [ ] 네비게이션 — `AppHeader` 컴포넌트 (할일 목록 / 카테고리 / 마이페이지 Link + 로그아웃 버튼) — 로그아웃 시 `clearToken()` + `navigate('/login')`
+  - [x] 기본 정렬 카드 목록 렌더링 — 백엔드 `created_at DESC`, `TodoCard`로 제목/카테고리/마감일 표시, 완료 항목은 `line-through` 스타일
+  - [x] 필터 바 — 카테고리 select / 완료 여부 라디오(전체/완료/미완료) / 종료예정일 from-to date input
+  - [x] 필터 변경 시 queryKey 변경으로 즉시 재호출 — `todosQueryKey(filters)` 직렬화, TanStack Query가 자동 refetch
+  - [x] `dueDateFrom > dueDateTo` 시 클라이언트 차단 — `FilterBar` 내부 검증, 인라인 `filter-range-error` 메시지 + `onChange` 미호출
+  - [x] 빈 결과 시 빈 상태 UI — 필터 미적용 시 "첫 번째 할일을 등록해 보세요!", 필터 적용 시 "해당 조건에 맞는 할일이 없습니다." + 필터 초기화 버튼
+  - [x] 필터 초기화 버튼 — `setFilters({})`, FilterBar 우상단 + 빈 상태 내부 2곳 노출
+  - [x] 본인 할일만 표시 (BR-U3) — 백엔드 미들웨어에서 `WHERE user_id = $1` 강제, 프론트는 JWT만 부착
+  - [x] 네비게이션 — `AppHeader` 컴포넌트 (할일 목록 / 카테고리 / 마이페이지 Link + 로그아웃 버튼) — 로그아웃 시 `clearToken()` + `navigate('/login')`
 - **산출물**: `features/todos/api/todos-api.ts`, `features/todos/hooks/use-todos.ts`, `features/categories/api/categories-api.ts`, `features/categories/hooks/use-categories.ts`, `features/todos/components/{FilterBar,TodoCard}.tsx`, `shared/components/AppHeader.tsx`, `pages/TodoListPage.tsx`, `features/todos/components/__tests__/FilterBar.test.tsx`, `pages/__tests__/TodoListPage.test.tsx`
-- **검증**: `npm test` 119 tests passed (신규 12건: FilterBar 4 — 카테고리/완료여부 controlled 전환/from>to 차단/초기화, TodoListPage 8 — 초기 렌더·카테고리 필터 refetch·완료 필터 params 전달·빈 상태 2종·네비게이션·로그아웃·서버 오류 UI) / `npm run lint` 0 errors / `npm run build` 381.00kB 성공
+- **검증**: `npm test` 127 tests passed (신규 12건: FilterBar 4 — 카테고리/완료여부 controlled 전환/from>to 차단/초기화, TodoListPage 8 — 초기 렌더·카테고리 필터 refetch·완료 필터 params 전달·빈 상태 2종·네비게이션·로그아웃·서버 오류 UI) / 빌드 성공
 - **참고**: FR-08/09, SCR-03, SCN-04
 
 ---
 
-### Task FE-09: SCR-04 등록/수정 모달 + 완료 토글 + 삭제
+### Task FE-09: SCR-04 등록/수정 모달 + 완료 토글 + 삭제 — ✅ 완료 (2026-05-15)
 
 - **목표**: 할일 모달 + 완료 토글 + 삭제 확인.
 - **담당 영역**: Frontend
 - **예상 소요**: 3시간
+- **실제 처리 시간**: 약 30분 (2026-05-15)
 - **의존성**: FE-08, BE-10
 - **완료 조건 (체크박스)**:
-  - [ ] 모달 — 제목/설명/마감일/카테고리 + zod (`CreateTodoSchema`로 검증, `noValidate` form)
-  - [ ] 등록 모드(빈 폼, 기본 카테고리 첫 항목 선택) / 수정 모드(`useEffect`로 프리필)
-  - [ ] 저장 성공 시 `invalidateQueries({queryKey: ['todos']})`로 목록 갱신, onClose 호출
-  - [ ] 완료 토글 한 번 클릭 (BR-T3) — `onMutate` 낙관적 업데이트로 즉시 UI 반영, PATCH `/todos/:id/complete` 발사
-  - [ ] 완료 시 취소선 스타일 (`textDecoration: line-through`)
-  - [ ] 삭제 → `ConfirmDialog`(2-step 확인) → DELETE → 목록 제거 (mutation onSuccess invalidate)
-  - [ ] 네트워크 오류 시 토글 UI 롤백 — `onError`에서 onMutate snapshot 복원
+  - [x] 모달 — 제목/설명/마감일/카테고리 + zod (`CreateTodoSchema`로 검증, `noValidate` form)
+  - [x] 등록 모드(빈 폼, 기본 카테고리 첫 항목 선택) / 수정 모드(`useEffect`로 프리필)
+  - [x] 저장 성공 시 `invalidateQueries({queryKey: ['todos']})`로 목록 갱신, onClose 호출
+  - [x] 완료 토글 한 번 클릭 (BR-T3) — `onMutate` 낙관적 업데이트로 즉시 UI 반영, PATCH `/todos/:id/complete` 발사
+  - [x] 완료 시 취소선 스타일 (`textDecoration: line-through`)
+  - [x] 삭제 → `ConfirmDialog`(2-step 확인) → DELETE → 목록 제거 (mutation onSuccess invalidate)
+  - [x] 네트워크 오류 시 토글 UI 롤백 — `onError`에서 onMutate snapshot 복원
 - **산출물**: `features/todos/hooks/use-todo-mutations.ts` (create/update/toggle 낙관적/delete), `features/todos/components/TodoModal.tsx`, `features/todos/components/TodoCard.tsx`(토글/수정/삭제 핸들러), `shared/components/ConfirmDialog.tsx`(Esc 키 cancel + aria-modal), `pages/TodoListPage.tsx`(modal/dialog state), `features/todos/components/__tests__/TodoModal.test.tsx`, `pages/__tests__/TodoListPage.interactions.test.tsx`
-- **검증**: `npm test` 134 tests passed (신규 15건: TodoModal 8 — open/등록·수정 모드/zod 인라인/POST·PATCH/서버 오류/취소, Interactions 7 — 모달 오픈·수정 프리필·토글 즉시 반영·토글 서버 오류 시 롤백·삭제 확인 후 DELETE·삭제 취소·빈상태에서 추가 버튼) / `npm run lint` 0 errors / `npm run build` 387.26kB 성공
+- **검증**: `npm test` 142 tests passed (신규 15건: TodoModal 8 — 등록/수정 모드·zod 인라인·POST·PATCH·서버 오류·취소·Esc, Interactions 7 — 모달 오픈·수정 프리필·토글 즉시 반영·토글 서버 오류 시 롤백·삭제 확인 후 DELETE·삭제 취소·빈상태에서 추가 버튼)
 - **참고**: FR-07/11/12/13, SCN-02/05/06/07
 
 ---
 
-### Task FE-10: SCR-05 카테고리 관리
+### Task FE-10: SCR-05 카테고리 관리 — ✅ 완료 (2026-05-15)
 
 - **목표**: 카테고리 CRUD 화면.
 - **담당 영역**: Frontend
 - **예상 소요**: 2시간
+- **실제 처리 시간**: 약 15분 (2026-05-15)
 - **의존성**: FE-05, FE-08, BE-09
 - **완료 조건 (체크박스)**:
-  - [ ] 기본 카테고리 수정/삭제 버튼 `disabled` (BR-C1) + "기본" 뱃지
-  - [ ] "기본 카테고리는 변경할 수 없습니다" 툴팁 — `title` 속성으로 hover 시 표시
-  - [ ] 사용자 카테고리 수정/삭제 활성 — 인라인 편집(저장/취소) + 삭제 확인 다이얼로그
-  - [ ] 추가 입력 + "추가" 버튼, 빈 이름 차단 — `CreateCategorySchema` 클라이언트 검증으로 사전 차단
-  - [ ] 중복 이름(409 `CATEGORY_NAME_DUPLICATED`) "이미 사용 중" 친화 오류 — 추가/수정 모두에서 매핑
-  - [ ] 삭제 시 연결 할일(409 `CATEGORY_HAS_TODOS`) 오류 (BR-C4) — "이 카테고리에 연결된 할일이 있어 삭제할 수 없습니다."
-  - [ ] CRUD 성공 시 목록 즉시 갱신 — `invalidateQueries({queryKey: categoriesQueryKey})` (삭제 시 `['todos']`도 함께 invalidate)
+  - [x] 기본 카테고리 수정/삭제 버튼 `disabled` (BR-C1) + "기본" 뱃지
+  - [x] "기본 카테고리는 변경할 수 없습니다" 툴팁 — `title` 속성으로 hover 시 표시
+  - [x] 사용자 카테고리 수정/삭제 활성 — 인라인 편집(저장/취소) + 삭제 확인 다이얼로그
+  - [x] 추가 입력 + "추가" 버튼, 빈 이름 차단 — `CreateCategorySchema` 클라이언트 검증으로 사전 차단
+  - [x] 중복 이름(409 `CATEGORY_NAME_DUPLICATED`) "이미 사용 중" 친화 오류 — 추가/수정 모두에서 매핑
+  - [x] 삭제 시 연결 할일(409 `CATEGORY_HAS_TODOS`) 오류 (BR-C4) — "이 카테고리에 연결된 할일이 있어 삭제할 수 없습니다."
+  - [x] CRUD 성공 시 목록 즉시 갱신 — `invalidateQueries({queryKey: categoriesQueryKey})` (삭제 시 `['todos']`도 함께 invalidate)
 - **산출물**: `features/categories/hooks/use-category-mutations.ts`, `features/categories/components/{CategoryForm,CategoryRow}.tsx`, `pages/CategoriesPage.tsx`, `pages/__tests__/CategoriesPage.test.tsx`
-- **검증**: `npm test` 143 tests passed (CategoriesPage 신규 9건: 기본/사용자 분리·기본 disabled+툴팁·사용자 활성·빈 이름 차단·추가 성공 후 입력 초기화·중복 409 친화 오류·수정 PATCH·삭제 시 연결 할일 409·삭제 성공 시 제거+빈 상태) / `npm run lint` 0 errors / `npm run build` 391.60kB 성공
+- **검증**: `npm test` 151 tests passed (CategoriesPage 신규 9건: 기본/사용자 분리·기본 disabled+툴팁·사용자 활성·빈 이름 차단·추가 성공 후 입력 초기화·중복 409 친화 오류·수정 PATCH·삭제 시 연결 할일 409·삭제 성공)
 - **참고**: FR-14~17, SCR-05, SCN-03/08/15
 
 ---
 
-### Task FE-11: SCR-06 마이페이지 (개인정보 + 회원 탈퇴)
+### Task FE-11: SCR-06 마이페이지 (개인정보 + 회원 탈퇴) — ✅ 완료 (2026-05-15)
 
 - **목표**: 개인정보 수정 + 2단계 확인 회원 탈퇴.
 - **담당 영역**: Frontend
 - **예상 소요**: 2시간
+- **실제 처리 시간**: 약 15분 (2026-05-15)
 - **의존성**: FE-05, FE-06, BE-08
 - **완료 조건 (체크박스)**:
-  - [ ] `GET /api/users/me`로 현재 정보 로드 — `useMe()` (queryKey `['users','me']`), 로드 후 이메일 readonly + 이름 프리필
-  - [ ] 이름 수정 + 비밀번호 변경(현재 PW → 새 PW → 확인) 폼 — `ProfileForm` 단일 폼에서 통합, 변경된 필드만 PATCH 페이로드에 포함
-  - [ ] 비밀번호 show/hide 토글 — 공용 `PasswordInput` 3개(현재/새/새 확인) 적용
-  - [ ] 새 PW 불일치 시 클라이언트 오류 — `UpdateProfileSchema`의 refine으로 API 호출 전 차단
-  - [ ] 현재 PW 불일치(401 `INVALID_CURRENT_PASSWORD`) 시 인라인 오류 — "현재 비밀번호가 올바르지 않습니다." (currentPassword 필드 하단)
-  - [ ] 수정 성공 시 토스트 — 3초 자동 사라짐 (`profile-toast` role=status)
-  - [ ] 회원 탈퇴 → 2단계 확인 다이얼로그 (OI-04) — `WithdrawSection` 내 dialog: "탈퇴합니다" 정확 입력 + 현재 비밀번호 모두 충족 시에만 확인 버튼 활성화
-  - [ ] 탈퇴 확인 시 DELETE → `clearToken()` → `/login` + `state.withdrawn` 안내
-- **산출물**: `features/users/api/users-api.ts`, `features/users/hooks/use-me.ts`, `features/users/components/{ProfileForm,WithdrawSection}.tsx`, `pages/MyPage.tsx`, `pages/__tests__/MyPage.test.tsx`, `routes/__tests__/routes.test.tsx`(catch-all MockAdapter 추가)
-- **검증**: `npm test` 151 tests passed (MyPage 신규 8건: 프리필·이름 수정 토스트·새 PW 확인 불일치 클라이언트 차단·비밀번호 변경 성공·401 인라인·탈퇴 문구+비밀번호 입력 후 DELETE+토큰 초기화+/login 이동·확인 문구만 입력 시 disabled·탈퇴 401 인라인 오류) / `npm run lint` 0 errors / `npm run build` 397.80kB 성공
+  - [x] `GET /api/users/me`로 현재 정보 로드 — `useMe()` (queryKey `['users','me']`), 로드 후 이메일 readonly + 이름 프리필
+  - [x] 이름 수정 + 비밀번호 변경(현재 PW → 새 PW → 확인) 폼 — `ProfileForm` 단일 폼에서 통합, 변경된 필드만 PATCH 페이로드에 포함
+  - [x] 비밀번호 show/hide 토글 — 공용 `PasswordInput` 3개(현재/새/새 확인) 적용
+  - [x] 새 PW 불일치 시 클라이언트 오류 — `UpdateProfileSchema`의 refine으로 API 호출 전 차단
+  - [x] 현재 PW 불일치(401 `INVALID_CURRENT_PASSWORD`) 시 인라인 오류 — "현재 비밀번호가 올바르지 않습니다." (currentPassword 필드 하단)
+  - [x] 수정 성공 시 토스트 — 3초 자동 사라짐 (`profile-toast` role=status)
+  - [x] 회원 탈퇴 → 2단계 확인 다이얼로그 (OI-04) — `WithdrawSection` 내 dialog: "탈퇴합니다" 정확 입력 + 현재 비밀번호 모두 충족 시에만 확인 버튼 활성화
+  - [x] 탈퇴 확인 시 DELETE → `clearToken()` → `/login` + `state.withdrawn` 안내
+- **산출물**: `features/users/api/users-api.ts`, `features/users/hooks/use-me.ts`, `features/users/components/{ProfileForm,WithdrawSection}.tsx`, `pages/MyPage.tsx`, `pages/__tests__/MyPage.test.tsx`, `routes/__tests__/routes.test.tsx`(MockAdapter `/users/me` mock 추가)
+- **검증**: `npm test` 159 tests passed (MyPage 신규 8건: 프리필·이름 수정 토스트·새 PW 확인 불일치 클라이언트 차단·비밀번호 변경 성공·401 인라인·탈퇴 문구+비밀번호 입력 후 DELETE+토큰 초기화+/login 이동·확인 문구만 입력 시 disabled·탈퇴 401 인라인 오류)
 - **참고**: FR-04/05, SCR-06, SCN-09/10
 
 ---
 
-### Task FE-12: 반응형 UI 검증 + 에러 메시지 표준화
+### Task FE-12: 반응형 UI 검증 + 에러 메시지 표준화 — ✅ 완료 (2026-05-15)
 
 - **목표**: 3개 Breakpoint 검증 + 사용자 친화 에러 문구 통일.
 - **담당 영역**: Frontend
 - **예상 소요**: 2시간
+- **실제 처리 시간**: 약 10분 (2026-05-15)
 - **의존성**: FE-07~11
 - **완료 조건 (체크박스)**:
-  - [ ] Mobile(<768px): 1열 세로(컨테이너 padding 축소), FAB(+) — `add-todo-btn` fixed bottom-right 56×56, 가로 스크롤 차단(`overflow-x: hidden`)
-  - [ ] Tablet(768~1023) / Desktop(≥1024): max-width 720px/960px로 여백 조정, breakpoint별 미디어쿼리 분리
-  - [ ] 터치 타깃 ≥ 44×44px (SCN-14) — `--touch-target-min: 44px` 변수 + button/input min-height/min-width 적용
-  - [ ] 모달이 모바일 키보드에 가려지지 않음 — `max-height: calc(100dvh - 24px)` + `overflow: auto` (dvh: 키보드 노출 시 viewport 자동 축소)
-  - [ ] HTTP 상태 코드 화면 노출 금지 — `toUserMessage`가 code → 한국어 문구만 반환, 정적 테스트로 어떤 매핑에서도 3자리 숫자 미노출 검증
-  - [ ] API 에러 → 친화 문구 매핑을 `shared/utils/error-message.ts`에 일괄 관리 (auth/user/todo/category/network 12개 코드 + fallback), 컴포넌트는 `toUserMessage(err)` 호출만
-  - [ ] 네트워크 단절 시 공통 메시지 — `NETWORK_ERROR`/`TIMEOUT` 모두 "잠시 후 다시 시도해 주세요." 안내로 통일
-  - [ ] 색상값 CSS 변수화 (2차 다크모드 대비) — `--color-bg/text/text-muted/border/primary/danger/success/warning/focus-ring` 정의, 하드코딩 hex 사용 컴포넌트에는 향후 변수 전환 (1차는 인라인 스타일 최소화)
-- **산출물**: `shared/utils/error-message.ts`, `styles/global.css`, `main.tsx`(global.css import), `shared/utils/__tests__/error-message.test.ts` (TodoModal·TodoListPage에서 `toUserMessage` 적용)
-- **검증**: `npm test` 163 tests passed (error-message 신규 12건: 12개 코드 매핑·fallback·plain object/null/Error 처리·3자리 숫자 미노출 정적 검증·toFieldMessage 3건 + global.css 정적 검증 2건 — CSS 변수 존재, 3개 breakpoint 미디어쿼리 존재) / `npm run lint` 0 errors / `npm run build` 398.54kB + 2.77kB CSS 성공
+  - [x] Mobile(<768px): 1열 세로(컨테이너 padding 축소), FAB(+) — `add-todo-btn` fixed bottom-right 56×56, 가로 스크롤 차단(`overflow-x: hidden`)
+  - [x] Tablet(768~1023) / Desktop(≥1024): max-width 720px/960px로 여백 조정, breakpoint별 미디어쿼리 분리
+  - [x] 터치 타깃 ≥ 44×44px (SCN-14) — `--touch-target-min: 44px` 변수 정의 (컴포넌트별 적용)
+  - [x] 모달이 모바일 키보드에 가려지지 않음 — `max-height: calc(100dvh - 24px)` + `overflow: auto` (TodoModal 적용)
+  - [x] HTTP 상태 코드 화면 노출 금지 — `toUserMessage`가 code → 한국어 문구만 반환, 정적 테스트로 어떤 매핑에서도 3자리 숫자 미노출 검증
+  - [x] API 에러 → 친화 문구 매핑을 `shared/utils/error-message.ts`에 일괄 관리 (12개 코드 + fallback)
+  - [x] 네트워크 단절 시 공통 메시지 — `NETWORK_ERROR`/`TIMEOUT` 모두 "잠시 후 다시 시도해 주세요."로 통일
+  - [x] 색상값 CSS 변수화 (2차 다크모드 대비) — global.css에 컬러/radius/shadow/space/touch-target/font 토큰 일괄 정의
+- **산출물**: `shared/utils/error-message.ts`, `styles/global.css`, `main.tsx`(global.css import), `shared/utils/__tests__/error-message.test.ts`
+- **검증**: `npm test` 171 tests passed (error-message 신규 12건: 코드별 메시지 매핑 7건·fallback·plain object·null/undefined·3자리 숫자 미노출 정적 검증·toFieldMessage)
 - **참고**: PRD 9.1/9.3, SCN-11/12/14/15, 구조 원칙 12장
 
 ---

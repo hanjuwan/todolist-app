@@ -75,13 +75,15 @@ CREATE TABLE IF NOT EXISTS todos (
     category_id  UUID         NOT NULL,
     title        VARCHAR(200) NOT NULL,
     description  TEXT,                                            -- nullable
-    due_date     DATE,                                            -- nullable, 과거 날짜 허용 (CHECK 제약 없음)
+    start_date   DATE,                                            -- nullable, 기간 관리용 시작일
+    due_date     DATE,                                            -- nullable, 과거 날짜 허용
     is_completed BOOLEAN      NOT NULL DEFAULT false,
     completed_at TIMESTAMPTZ,                                     -- 완료 시 서비스 레이어에서 now() 설정, 완료 취소 시 NULL
     created_at   TIMESTAMPTZ  NOT NULL DEFAULT now(),
     updated_at   TIMESTAMPTZ  NOT NULL DEFAULT now(),
 
     CONSTRAINT todos_pkey        PRIMARY KEY (id),
+    CONSTRAINT todos_dates_check CHECK (start_date IS NULL OR due_date IS NULL OR start_date <= due_date),
     CONSTRAINT todos_user_fk     FOREIGN KEY (user_id)
         REFERENCES users (id)
         ON DELETE CASCADE,                                        -- 회원 탈퇴 시 할일 자동 삭제 (BR-U4)
@@ -99,6 +101,9 @@ CREATE INDEX IF NOT EXISTS idx_todos_user_id_is_completed
 
 CREATE INDEX IF NOT EXISTS idx_todos_user_id_due_date
     ON todos (user_id, due_date);
+
+CREATE INDEX IF NOT EXISTS idx_todos_user_id_start_date
+    ON todos (user_id, start_date);
 
 CREATE INDEX IF NOT EXISTS idx_todos_category_id
     ON todos (category_id);

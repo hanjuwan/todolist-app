@@ -34,6 +34,7 @@ async function create(userId, payload) {
     categoryId: payload.categoryId,
     title: payload.title,
     description: payload.description,
+    startDate: payload.startDate,
     dueDate: payload.dueDate,
   });
   console.log(`[todos.create] success userId=${userId} todoId=${created.id}`);
@@ -53,6 +54,7 @@ async function update(userId, id, payload) {
   if (payload.categoryId !== undefined) fields.category_id = payload.categoryId;
   if (payload.title !== undefined) fields.title = payload.title;
   if (payload.description !== undefined) fields.description = payload.description;
+  if (payload.startDate !== undefined) fields.start_date = payload.startDate;
   if (payload.dueDate !== undefined) fields.due_date = payload.dueDate;
 
   const updated = await repo.updateForUser({ id, userId, fields });

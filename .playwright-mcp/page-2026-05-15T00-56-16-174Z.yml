@@ -1,0 +1,68 @@
+- generic [ref=e57]:
+  - banner [ref=e58]:
+    - generic [ref=e59]: TodoListApp
+    - navigation [ref=e60]:
+      - link "할일 목록" [ref=e61] [cursor=pointer]:
+        - /url: /todos
+      - link "카테고리" [ref=e62] [cursor=pointer]:
+        - /url: /categories
+      - link "마이페이지" [ref=e63] [cursor=pointer]:
+        - /url: /mypage
+      - button "로그아웃" [ref=e64] [cursor=pointer]
+  - main [ref=e65]:
+    - generic [ref=e66]:
+      - heading "할일 목록" [level=1] [ref=e67]
+      - button "새 할일 추가" [active] [ref=e68] [cursor=pointer]
+    - generic [ref=e70]:
+      - button "필터 초기화" [ref=e71] [cursor=pointer]
+      - generic [ref=e72]:
+        - generic [ref=e73]:
+          - generic [ref=e74]: 카테고리
+          - combobox [ref=e75] [cursor=pointer]:
+            - option "전체" [selected]
+            - option "개인"
+            - option "기타"
+            - option "업무"
+            - option "학습"
+        - generic [ref=e76]:
+          - generic [ref=e77]: 완료 여부
+          - generic [ref=e78]:
+            - generic [ref=e79] [cursor=pointer]:
+              - radio "전체" [checked] [ref=e80]
+              - text: 전체
+            - generic [ref=e81] [cursor=pointer]:
+              - radio "완료" [ref=e82]
+              - text: 완료
+            - generic [ref=e83] [cursor=pointer]:
+              - radio "미완료" [ref=e84]
+              - text: 미완료
+        - generic [ref=e85]:
+          - generic [ref=e86]: 종료예정일
+          - generic [ref=e87]:
+            - textbox [ref=e88]
+            - generic [ref=e89]: ~
+            - textbox [ref=e90]
+    - paragraph [ref=e91]: 첫 번째 할일을 등록해 보세요!
+  - dialog "새 할일 추가" [ref=e93]:
+    - heading "새 할일 추가" [level=2] [ref=e95]
+    - generic [ref=e96]:
+      - generic [ref=e97]:
+        - generic [ref=e98]:
+          - generic [ref=e99]: 제목 *
+          - textbox "제목 *" [ref=e100]
+        - generic [ref=e101]:
+          - generic [ref=e102]: 카테고리 *
+          - combobox "카테고리 *" [ref=e103]:
+            - option "개인" [selected]
+            - option "기타"
+            - option "업무"
+            - option "학습"
+        - generic [ref=e104]:
+          - generic [ref=e105]: 마감일
+          - textbox "마감일" [ref=e106]
+        - generic [ref=e107]:
+          - generic [ref=e108]: 설명
+          - textbox "설명" [ref=e109]
+      - generic [ref=e110]:
+        - button "취소" [ref=e111] [cursor=pointer]
+        - button "저장" [ref=e112] [cursor=pointer]

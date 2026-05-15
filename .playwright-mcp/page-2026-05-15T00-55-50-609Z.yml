@@ -1,0 +1,19 @@
+- generic [ref=e41]:
+  - status [ref=e42]: 회원가입이 완료되었습니다. 로그인해 주세요.
+  - generic [ref=e43]:
+    - heading "로그인" [level=1] [ref=e44]
+    - generic [ref=e45]:
+      - generic [ref=e46]:
+        - generic [ref=e47]: 이메일
+        - textbox "이메일" [ref=e48]
+      - generic [ref=e49]:
+        - generic [ref=e50]: 비밀번호
+        - generic [ref=e51]:
+          - textbox "비밀번호" [ref=e52]:
+            - /placeholder: 비밀번호를 입력해 주세요
+          - button "비밀번호 보기" [ref=e53] [cursor=pointer]: 보기
+      - button "로그인" [ref=e54] [cursor=pointer]
+    - paragraph [ref=e55]:
+      - text: 계정이 없으신가요?
+      - link "회원가입" [ref=e56] [cursor=pointer]:
+        - /url: /register

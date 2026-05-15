@@ -1,0 +1,89 @@
+:root {
+  --color-primary: #2563EB;
+  --color-primary-hover: #1D4ED8;
+  --color-primary-soft-bg: #DBEAFE;
+  --color-primary-soft-text: #1E40AF;
+
+  --color-accent: #16A34A;
+  --color-accent-hover: #15803D;
+  --color-accent-soft-bg: #DCFCE7;
+  --color-accent-text-on: #FFFFFF;
+
+  --color-warning: #F97316;
+  --color-warning-soft-bg: #FFEDD5;
+  --color-warning-soft-border: #FDBA74;
+  --color-warning-text: #9A3412;
+
+  --color-danger: #DC2626;
+  --color-danger-hover: #B91C1C;
+  --color-danger-soft-bg: #FEE2E2;
+
+  --color-bg: #FFFFFF;
+  --color-surface: #F8FAFC;
+  --color-border: #E5E7EB;
+  --color-border-strong: #CBD5E1;
+  --color-text: #111827;
+  --color-text-muted: #6B7280;
+  --color-text-disabled: #9CA3AF;
+  --color-focus-ring: rgba(37, 99, 235, 0.35);
+
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-pill: 999px;
+
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.12);
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-8: 48px;
+
+  --touch-target-min: 44px;
+
+  --color-cat-1-bg: #DBEAFE; --color-cat-1-text: #1E40AF; --color-cat-1-dot: #3B82F6;
+  --color-cat-2-bg: #DCFCE7; --color-cat-2-text: #15803D; --color-cat-2-dot: #22C55E;
+  --color-cat-3-bg: #FFEDD5; --color-cat-3-text: #9A3412; --color-cat-3-dot: #F97316;
+  --color-cat-4-bg: #EDE9FE; --color-cat-4-text: #5B21B6; --color-cat-4-dot: #8B5CF6;
+  --color-cat-5-bg: #FCE7F3; --color-cat-5-text: #9D174D; --color-cat-5-dot: #EC4899;
+  --color-cat-6-bg: #CCFBF1; --color-cat-6-text: #115E59; --color-cat-6-dot: #14B8A6;
+  --color-cat-7-bg: #FEF3C7; --color-cat-7-text: #854D0E; --color-cat-7-dot: #EAB308;
+  --color-cat-8-bg: #FEE2E2; --color-cat-8-text: #991B1B; --color-cat-8-dot: #EF4444;
+
+  font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; padding: 0; background: var(--color-bg); color: var(--color-text); overflow-x: hidden; }
+
+@media (max-width: 767px) {
+  .container { padding: 0 16px; }
+  .add-todo-btn {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    color: #fff;
+    border: none;
+    box-shadow: var(--shadow-lg);
+    z-index: 100;
+    cursor: pointer;
+    font-size: 24px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .container { max-width: 720px; margin: 0 auto; }
+}
+
+@media (min-width: 1024px) {
+  .container { max-width: 960px; margin: 0 auto; }
+}

@@ -10,6 +10,7 @@ function mapRow(row) {
     categoryId: row.category_id,
     title: row.title,
     description: row.description,
+    startDate: row.start_date,
     dueDate: row.due_date,
     isCompleted: row.is_completed,
     completedAt: row.completed_at,
@@ -19,7 +20,7 @@ function mapRow(row) {
 }
 
 const SELECT_COLS =
-  'id, user_id, category_id, title, description, due_date, is_completed, completed_at, created_at, updated_at';
+  'id, user_id, category_id, title, description, start_date, due_date, is_completed, completed_at, created_at, updated_at';
 
 /**
  * BE-11: 동적 필터 빌더. WHERE user_id = $1 고정 + 옵션 조건 누적.
@@ -90,12 +91,12 @@ async function findByIdForUser(id, userId) {
   return mapRow(rows[0]);
 }
 
-async function create({ userId, categoryId, title, description, dueDate }) {
+async function create({ userId, categoryId, title, description, startDate, dueDate }) {
   const { rows } = await pool.query(
-    `INSERT INTO todos (user_id, category_id, title, description, due_date)
-     VALUES ($1, $2, $3, $4, $5)
+    `INSERT INTO todos (user_id, category_id, title, description, start_date, due_date)
+     VALUES ($1, $2, $3, $4, $5, $6)
      RETURNING ${SELECT_COLS}`,
-    [userId, categoryId, title, description ?? null, dueDate ?? null],
+    [userId, categoryId, title, description ?? null, startDate ?? null, dueDate ?? null],
   );
   return mapRow(rows[0]);
 }

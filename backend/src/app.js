@@ -19,13 +19,23 @@ const app = express();
 
 app.use(helmet());
 
-const allowedOrigins = env.corsOrigin.split(',').map((s) => s.trim()).filter(Boolean);
+const corsMatchers = env.corsOrigin
+  .split(',')
+  .map((s) => s.trim())
+  .filter(Boolean)
+  .map((pattern) => {
+    if (!pattern.includes('*')) return (origin) => origin === pattern;
+    const escaped = pattern.replace(/[.+^${}()|[\]\\?]/g, '\\$&').replace(/\*/g, '.*');
+    const re = new RegExp(`^${escaped}$`);
+    return (origin) => re.test(origin);
+  });
+
 app.use(
   cors({
     origin: (origin, cb) => {
-      if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
+      if (!origin || corsMatchers.some((m) => m(origin))) return cb(null, true);
       console.log(`[cors] blocked origin=${origin}`);
-      return cb(new Error('Not allowed by CORS'));
+      return cb(null, false);
     },
     credentials: false,
   }),

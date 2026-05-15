@@ -18,7 +18,18 @@ const { notFoundHandler, errorHandler } = require('./middlewares/error.middlewar
 const app = express();
 
 app.use(helmet());
-app.use(cors({ origin: env.corsOrigin, credentials: false }));
+
+const allowedOrigins = env.corsOrigin.split(',').map((s) => s.trim()).filter(Boolean);
+app.use(
+  cors({
+    origin: (origin, cb) => {
+      if (!origin || allowedOrigins.includes(origin)) return cb(null, true);
+      console.log(`[cors] blocked origin=${origin}`);
+      return cb(new Error('Not allowed by CORS'));
+    },
+    credentials: false,
+  }),
+);
 app.use(express.json({ limit: '1mb' }));
 app.use(requestLogger);
 
